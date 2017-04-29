@@ -42,6 +42,7 @@ var fno = function() {
 module.exports = {
 	new: () => new fno(),
 	extend: fnExtend,
+	compare: fnDeepCompare,
 	round: fnRound,
 	getValue: fnGetValue,
 	addPropGS: fnAddPropGetSet,
@@ -81,6 +82,40 @@ function fnExtend(){
 	}
 	return retval;
 }
+
+function fnDeepCompare(a,b,existsOnly,n) {
+	if(typeof existsOnly=='undefined') existsOnly = 0;
+	if(typeof n=='undefined') n = '';
+	else n+='.';
+	var iso = a=> typeof a=='object' && a!=null;
+	var isf = a=> typeof a=='function';
+	var notofu = a=> typeof a!='object' && typeof a!='function' && typeof a!='undefined';
+	var retval = true;
+	if(notofu(a) && notofu(b)) {
+		if(a!==b) {
+			if(module.exports.debug) console.log(n, a, b, a!==b);
+			retval = false;
+		}
+	} else if(iso(a) && iso(b)) {
+		var keys = Object.keys(a);
+		keys = keys.concat(Object.keys(b));
+		keys = keys.filter((x,i)=> i==keys.indexOf(x));
+		for(var i=0;i<keys.length;i++) {
+			var key = keys[i];
+			var val = fnDeepCompare(a[key], b[key], existsOnly, n+key);
+			if(!val) {
+				retval = false;
+				if(!module.exports.debug) break;
+			}
+		}
+	} else if(isf(a) && isf(b)) {
+	} else if(!existsOnly) {
+		if(module.exports.debug) console.log(n, typeof a, typeof b);
+		retval = false;
+	}
+	return retval;
+}
+
 
 function fnAddPropGetSet(obj, key, fnGet, fnSet){
 	var val = {enumerable:true,configurable:true};
