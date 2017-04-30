@@ -55,7 +55,7 @@ function fnExtend(){
 	if(arguments.length>0) retval = arguments[0];
 	for(var i=1;i<arguments.length;i++){
 		var arg = arguments[i];
-		if(typeof arg!='object') continue;
+		if(typeof arg!='object' || arg==null) continue;
 		var argKeys = Object.keys(arg);
 		for(var j=0;j<argKeys.length;j++){
 			var key = argKeys[j];
@@ -136,6 +136,7 @@ function fnRound(x, n) {
 function fnGetValue(obj, key, def) {
 	if(typeof obj!=='object') return def;
 	var retval = def;
+	if(typeof key == 'string') key = key.split('.');
 	if(Array.isArray(key)) {
 		var nxtObj = obj;
 		var fail = false;
