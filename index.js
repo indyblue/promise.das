@@ -43,6 +43,7 @@ module.exports = {
 	new: () => new fno(),
 	extend: fnExtend,
 	compare: fnDeepCompare,
+	arraydim: fnArrayDims,
 	round: fnRound,
 	getValue: fnGetValue,
 	addPropGS: fnAddPropGetSet,
@@ -116,6 +117,18 @@ function fnDeepCompare(a,b,existsOnly,n) {
 	return retval;
 }
 
+function fnArrayDims(a) {
+	var dims = [];
+	var tmpa = a;
+	var i = 0;
+	while(Array.isArray(tmpa)) {
+		dims.push(tmpa.length);
+		tmpa = tmpa[0];
+		i++;
+		if(i>10) break;
+	}
+	return dims;
+}
 
 function fnAddPropGetSet(obj, key, fnGet, fnSet){
 	var val = {enumerable:true,configurable:true};
